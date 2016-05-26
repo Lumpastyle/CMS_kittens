@@ -64,6 +64,8 @@ class PageController
             return;
         }
 
+        $nav = $this->generateNav();
+
         // Si donnees, les afficher
         include "View/page-display.php";
     }
@@ -72,8 +74,21 @@ class PageController
     {
         ob_start();
 
+        // Definition d'un slug par defaut (si pas de parametre)
+        $slug = 'teletubbies';
+
+        // Recuperation du slug dans l'url si il est present
+        if(isset($_GET['p'])){
+            $slug = $_GET['p'];
+        }
+
+        $navi = $this->repository->getNav();
+
+        include_once "View/nav.php";
+        
         // Generer la nav
         $nav = ob_get_clean();
+
         return $nav;
     }
 }

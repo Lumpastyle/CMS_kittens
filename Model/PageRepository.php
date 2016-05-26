@@ -72,6 +72,29 @@ class PageRepository
         $stmt = $this->PDO->prepare($sql);
         $stmt->bindParam(':slug',$slug,\PDO::PARAM_STR);
         $stmt->execute();
+
         return $stmt->fetchObject();
+    }
+
+    /**
+     * @return array
+     */
+    public function getNav()
+    {
+        $sql ="SELECT
+                    `slug`,
+                    `title`
+                FROM
+                    `page`
+                ";
+        $stmt = $this->PDO->prepare($sql);
+        $stmt->execute();
+        $data = [];
+
+        while($row = $stmt->fetchObject()){
+            $data[] = $row;
+        };
+
+        return $data;
     }
 }
