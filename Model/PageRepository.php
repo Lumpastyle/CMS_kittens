@@ -23,38 +23,85 @@ class PageRepository
     {
         $this->PDO = $PDO;
     }
+
     /**
-     * @param null $id
-     * @return array
-     */
-    public function lister($id = null)
-    {
-        return [];
-    }
-    /**
-     * @param array $data
+     * @param $id
+     * @param $data
      * @return bool
      */
-    public function modifier(array $data)
+    public function modifier($id, $data)
     {
+        $sql ="UPDATE
+                  `page`
+               SET
+                  `slug` = :slug,
+                  `title` = :title,
+                  `body` = :body
+                WHERE
+                  `id` = :id
+                LIMIT
+                  1
+                ";
+        $stmt = $this->PDO->prepare($sql);
+        $stmt->bindParam(':slug',$data->slug,\PDO::PARAM_STR);
+        $stmt->bindParam(':title',$data->title,\PDO::PARAM_STR);
+        $stmt->bindParam(':body',$data->body,\PDO::PARAM_STR);
+        $stmt->bindParam(':id',$id,\PDO::PARAM_STR);
+        $stmt->execute();
+
         return true;
     }
+
     /**
-     * @param int $id
+     * @param $id
      * @return bool
      */
-    public function supprimer(int $id)
+    public function supprimer($id)
     {
+        $sql="DELETE
+              FROM
+              `page`
+              WHERE
+              `id` = :id
+              LIMIT
+              1
+        ";
+        $stmt = $this->PDO->prepare($sql);
+        $stmt->bindParam(':id',$id,\PDO::PARAM_STR);
+        $stmt->execute();
+
         return true;
     }
+
     /**
      * @param array $data
      * @return int
      */
-    public function inserer(array $data)
+    public function inserer($data)
     {
+        $sql ="INSERT INTO
+                `page`
+                (
+                      `slug`,
+                      `title`,
+                      `body`
+                )
+                VALUES
+                (
+                    :slug,
+                    :title,
+                    :body
+                )
+                ";
+        $stmt = $this->PDO->prepare($sql);
+        $stmt->bindParam(':slug',$data->slug,\PDO::PARAM_STR);
+        $stmt->bindParam(':title',$data->title,\PDO::PARAM_STR);
+        $stmt->bindParam(':body',$data->body,\PDO::PARAM_STR);
+        $stmt->execute();
+
         return 1;
     }
+
     /**
      * @param $slug
      * @return \stdClass\bool
@@ -89,6 +136,8 @@ class PageRepository
                 ";
         $stmt = $this->PDO->prepare($sql);
         $stmt->execute();
+
+        /*
         $data = [];
 
         while($row = $stmt->fetchObject()){
@@ -96,5 +145,49 @@ class PageRepository
         };
 
         return $data;
+        */
+
+        return $stmt->fetchAll(\PDO::FETCH_OBJ);
+    }
+
+    /**
+     * @param $id
+     * @return \stdClass|bool
+     */
+    public function getById($id)
+    {
+        $sql ="SELECT
+                    `id`,
+                    `slug`,
+                    `body`,
+                    `title`
+                FROM
+                    `page`
+                WHERE
+                    `id` = :id
+                ";
+        $stmt = $this->PDO->prepare($sql);
+        $stmt->bindParam(':id',$id,\PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchObject();
+    }
+
+    /**
+     * @return array
+     */
+    public function findAll()
+    {
+        $sql = "SELECT
+                      `id`,
+                      `slug`,
+                      `title`
+                  FROM
+                      `page`
+                  ";
+        $stmt = $this->PDO->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll(\PDO::FETCH_OBJ);
     }
 }
