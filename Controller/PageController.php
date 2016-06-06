@@ -23,27 +23,69 @@ class PageController
 
     public function ajoutAction()
     {
+        require "View/admin_ajouter.php";
+
+        if(count($_POST) === 0) {
+            // ne rien faire
+        } else {
+            // traitement de la requete
+            $newpage = (object) array(
+                'slug' => $_POST['slug'],
+                'title' => $_POST['title'],
+                'body' => $_POST['body']
+            );
+            $this->repository->inserer($newpage);
+        }
     }
 
     public function supprimerAction()
     {
+        $id = $_GET['id'];
+        $this->repository->supprimer($id);
+        header('location:index.php');
     }
 
     public function modifierAction()
     {
+        $id = $_GET['id'];
+        $data = $this->repository->getById($id);
+        require "View/admin_modifier.php";
+
+        if(count($_POST) === 0) {
+            // ne rien faire
+        } else {
+            // traitement de la requete
+            $newpage = (object) array(
+                'slug' => $_POST['slug'],
+                'title' => $_POST['title'],
+                'body' => $_POST['body']
+            );
+            $this->repository->modifier($id, $newpage);
+        }
     }
 
     public function detailsAction()
     {
+        if(!isset($_GET['id'])){
+            throw new \Exception('mdr le truc');
+        }
+        // recuperation de donnees
+        $data = $this->repository->getById($_GET['id']);
+        // affichage des donnees
+        require "View/admin_details.php";
     }
 
     public function listeAction()
     {
+        // recuperer les donnees
+        $data = $this->repository->findAll();
+        // afficher les donnees
+        include "View/admin_list.php";
     }
 
     public function displayAction()
     {
-        // Definition d'un slug par defaut (si pas de parametre)
+        // Definition d'un slug par defaut (si pas de parametres)
         $slug = 'teletubbies';
 
         // Recuperation du slug dans l'url si il est present

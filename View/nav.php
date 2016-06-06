@@ -5,17 +5,17 @@
             </div>
             <div id="navbar" class="navbar-collapse collapse">
                 <ul class="nav navbar-nav">
-                    <?php
-                    foreach($navi as $val):
-                        $active = '';
-                        if($val->slug == $slug):
-                            $active = " class=\"active\"";
-                        endif;
-                        ?>
+<?php
+foreach($navi as $val):
+    $active = '';
+if($val->slug == $slug):
+    $active = " class=\"active\"";
+endif;
+?>
                         <li<?=$active?>><a href="index.php?p=<?=$val->slug?>"><?=$val->title?></a></li>
-                        <?php
-                    endforeach;
-                    ?>
+<?php
+endforeach;
+?>
                 </ul>
             </div>
         </div>
